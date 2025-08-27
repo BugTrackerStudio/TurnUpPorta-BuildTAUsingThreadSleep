@@ -63,15 +63,25 @@ namespace BuildTAUsingThreadSleep
             IWebElement createNewButton = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
             createNewButton.Click();
 
-            //Select a Time from the dropDown
-            IWebElement typeCodeDropDown = driver.FindElement(By.XPath("//form[@id='TimeMaterialEditForm']//span[text()='select']"));
-            //IWebElement typeCodeDropDown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]/span"));
+            //Click the dropdown
+            IWebElement typeCodeDropDown = driver.FindElement(By.XPath("//*[@id='TimeMaterialEditForm']//span[@role='listbox']"));
             typeCodeDropDown.Click();
-            Thread.Sleep(2000);
+            Thread.Sleep(2000); 
 
-            //IWebElement timeOption = driver.FindElement(By.XPath("//form[@id='TimeMaterialEditForm']//span[text()='Time']"));
-            IWebElement timeOption = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[1]"));
+            //Select the option "Time"
+            IWebElement timeOption = driver.FindElement(By.XPath("//ul[@id='TypeCode_listbox']/li[text()='Time']"));
             timeOption.Click();
+
+            /*
+             * aria-owns="TypeCode_listbox"
+               That’s telling you:
+               ➡️ the dropdown owns a list with the ID = TypeCode_listbox.
+               ➡️ That <ul id="TypeCode_listbox"> will appear after you click the dropdown.
+
+                So the sequence is:
+                Find and click the dropdown (role='listbox' or by id='TypeCode').
+                Then Selenium can find //ul[@id='TypeCode_listbox']/li[text()='Time']
+             */
 
             //Type code into code TextBox
             IWebElement codeTextBox = driver.FindElement(By.Id("Code"));
@@ -124,39 +134,6 @@ namespace BuildTAUsingThreadSleep
             editButton.Click();
             Thread.Sleep(2000);
 
-            //edit a Time or Material Record Dropdown menu
-            IWebElement editTypeCodeDropDown = driver.FindElement(By.XPath("//form[@id='TimeMaterialEditForm']//span[text()='select']"));
-            editTypeCodeDropDown.Click();
-
-            IWebElement editTimeOption = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[1]"));
-            editTimeOption.Click();
-
-            /*//Not Done: Final logic 
-            IWebElement typeDropdown = driver.FindElement(By.XPath("//span[@class='k-input']"));
-            string currentValue = typeDropdown.Text;
-            Console.WriteLine("Current selected value: " + currentValue);
-
-            // Determine the target value
-            string targetValue = currentValue == "Time" ? "Material" : "Time";
-
-            // Only change if different
-            if (currentValue != targetValue)
-            {
-                typeDropdown.Click();
-                Thread.Sleep(1500);
-
-                IWebElement optionToSelect = driver.FindElement(By.XPath($"//li[text()='{targetValue}']"));
-                optionToSelect.Click();
-                Console.WriteLine("Updated selected value: " + targetValue);
-
-                Thread.Sleep(2500);
-            }
-            else
-            {
-                Console.WriteLine("Dropdown already has the target value. No change needed.");
-                Thread.Sleep(1000);
-            }*/
-
             //edit code into codeTextBox
             IWebElement editCodeTextBox = driver.FindElement(By.Id("Code"));
             editCodeTextBox.Clear();
@@ -169,13 +146,15 @@ namespace BuildTAUsingThreadSleep
             editDescriptionTextBox.SendKeys("This is a Edit description");
             Thread.Sleep(2000);
 
-            //Not Done Edit price into the price textbox
-            /*IWebElement editPriceTagOverlap = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
+            //Edit price into the price textbox
+            IWebElement editPriceTagOverlap = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
             editPriceTagOverlap.Click();
 
             IWebElement editPriceTextBox = driver.FindElement(By.Id("Price"));
             editPriceTextBox.Clear();
-            editPriceTextBox.SendKeys("120");*/
+            editPriceTagOverlap.Clear();
+            Thread.Sleep(2000);
+            editPriceTagOverlap.SendKeys("120");
 
             //Click on Save Button
             IWebElement editSaveButton = driver.FindElement(By.Id("SaveButton"));
@@ -194,8 +173,7 @@ namespace BuildTAUsingThreadSleep
             deleteButton.Click();
             Thread.Sleep(1500);
 
-            //Click OK to delete
-            //Handle the alert
+            //Click OK to delete: Handle the alert
             driver.SwitchTo().Alert().Accept();
             Thread.Sleep(3000);
 
